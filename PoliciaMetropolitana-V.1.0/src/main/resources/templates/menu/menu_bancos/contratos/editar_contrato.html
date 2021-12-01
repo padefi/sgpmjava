@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout::head">
+<meta charset="UTF-8">
+</head>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#vigilante,#entidad,#sucursal').select2();
+
+    //FECHA DE HOY
+    var f = new Date();
+    var anio = f.getFullYear();
+    var mes = f.getMonth()+1;
+    var dia = f.getDate()+1;
+
+    if(mes < 10){
+    	mes = '0' + mes;
+    }
+
+	fecha_min = anio + '-' + mes + '-' + dia;
+
+	let fecha_contrato = document.getElementById('fecha_contrato');
+	fecha_contrato.min = fecha_min;
+
+	$("#vigilante").val($("#id_vigilante").val());
+    $("#select2-chosen-1").html($("#descripcion_vigilante").val());
+    $("#entidad").val($("#id_entidad").val());
+    $("#select2-chosen-2").html($("#descripcion_entidad").val());
+    $("#sucursal").val($("#id_sucursal").val());
+    $("#select2-chosen-3").html($("#descripcion_sucursal").val());
+});
+</script>
+<body>
+	<header th:replace="layout/layout::header"></header>
+	<div class="container">
+		<div class="row">
+			<div align="center" style="margin-top: 40px;">
+				<a class="btn btn-primary" th:href="@{/menu_bancos/contratos/contratos}" title="Ir la página anterior">VOLVER</a>
+			</div>
+			<form method="POST" role="form" id="formulario" name="formulario" class="form" th:action="@{/menu_bancos/contratos/editar/guardar_contrato}">
+			<div class="panel panel-primary filterable" style="width: 30%;margin-left:35%;">
+	            <div class="panel-heading">
+	                <h4 align="center">Editar Contrato</h4>
+	            </div>
+				<table class="table">
+					<tr>
+		                <td><b>Vigilante:</b></td>
+		                <td><select id="vigilante" name="vigilante">
+		                	<option value="0">--SELECCIONE--</option>
+		                	<option th:each="vigilante: ${vigilantes}" th:value="${vigilante.id}" th:if="${vigilante.arma == 1}" th:utext="${vigilante.usuario.persona.apellido}+', '+${vigilante.usuario.persona.nombre} + ' (&lt;strong&gt;ARMADO&lt;/strong&gt;)'"></option>
+		                	<option th:each="vigilante: ${vigilantes}" th:value="${vigilante.id}" th:unless="${vigilante.arma == 1}" th:utext="${vigilante.usuario.persona.apellido}+', '+${vigilante.usuario.persona.nombre} + ' (&lt;strong&gt;SIN ARMA&lt;/strong&gt;)'"></option>
+							</select></td>
+		            </tr>
+		            <tr>
+		                <td><b>Entidad Bancaria:</b></td>
+		                <td><select id="entidad" name="entidad">
+		                	<option value="0">--SELECCIONE--</option>
+		                	<option th:each="entidad: ${entidades}" th:value="${entidad.id}" th:text="${entidad.descripcion}"></option>
+							</select></td>
+		            </tr>
+		            <tr>
+		                <td><b>Sucursal:</b></td>
+		                <td><select id="sucursal" name="sucursal">
+		                	<option value="0">--SELECCIONE--</option>
+		                	<option th:each="sucursal: ${sucursales}" th:value="${sucursal.id}" th:text="${sucursal.descripcion}"></option>
+							</select></td>
+		            </tr>
+		            <tr>
+		            	<td><b>Fecha Contrato:</b></td>
+		                <td><input class="form-control" style="width: 170px;height: 30px;" id="fecha_contrato" name="fecha_contrato" type="date" required="" autocomplete="off"th:value="${contrato.fechacontrato}"></td>
+		            </tr>		           
+				</table>
+			</div>
+			<div align="center" style="margin-top: 40px;">
+				<input class="btn btn-primary" style="width: 100px;" onclick="validar()" value="GUARDAR">
+				<input hidden="hidden" id="id_contrato" name="id_contrato" th:value="${contrato.id}">
+				<input hidden="hidden" id="id_vigilante" name="id_vigilante" th:value="${contrato.vigilante.id}">
+				<input hidden="hidden" id="descripcion_vigilante" name="descripcion_vigilante" th:if="${contrato.vigilante.arma == 1}" th:value="${contrato.vigilante.usuario.persona.apellido}+', '+${contrato.vigilante.usuario.persona.nombre} + ' (&lt;strong&gt;ARMADO&lt;/strong&gt;)'">
+				<input hidden="hidden" id="descripcion_vigilante" name="descripcion_vigilante" th:unless="${contrato.vigilante.arma == 1}" th:value="${contrato.vigilante.usuario.persona.apellido}+', '+${contrato.vigilante.usuario.persona.nombre} + ' (&lt;strong&gt;ARMADO&lt;/strong&gt;)'">
+				<input hidden="hidden" id="id_entidad" name="id_entidad" th:value="${contrato.sucursal.entidad.id}">
+				<input hidden="hidden" id="descripcion_entidad" name="descripcion_entidad" th:value="${contrato.sucursal.entidad.descripcion}">
+				<input hidden="hidden" id="id_sucursal" name="id_sucursal" th:value="${contrato.sucursal.id}">
+				<input hidden="hidden" id="descripcion_sucursal" name="descripcion_sucursal" th:value="${contrato.sucursal.descripcion}">
+			</div>
+			</form>
+		</div>	
+    </div>
+	
+	<footer th:replace="layout/layout::footer"></footer>
+</body>
+</html>
+<script type="text/javascript">
+function validar(){
+
+	if($("#vigilante").val() == '0'){
+		alert("Debe seleccionar un vigilante");
+		document.formulario.vigilante.focus();
+		return 0;
+	}
+
+	if($("#entidad").val() == '0'){
+		alert("Debe seleccionar una entidad");
+		document.formulario.entidad.focus();
+		return 0;
+	}
+
+	if($("#sucursal").val() == '0'){
+		alert("Debe seleccionar una sucursal");
+		document.formulario.sucursal.focus();
+		return 0;
+	}
+
+	if($("#fecha_contrato").val() == ''){
+		alert("Debe seleccionar una fecha de contrato");
+		document.formulario.fecha_contrato.focus();
+		return 0;
+	}
+		
+	var fecha = $("#fecha_contrato").val();
+
+	var fecha_hoy = new Date;
+	var anio = fecha_hoy.getFullYear();
+	var dia = fecha_hoy.getDate()+1;
+
+	if((fecha_hoy.getMonth()+1) < 9){
+		var mes = '0'+(fecha_hoy.getMonth()+1);
+	}else{
+		var mes = fecha_hoy.getMonth()+1;
+	}
+
+	var fecha_hoy = (anio) + "-" + (mes) + "-" + (dia);
+
+	if(fecha < fecha_hoy){
+		alert("El contrato no puede ser igual o menor a la fecha de hoy");
+		document.formulario.fecha_contrato.focus();
+		return 0;
+	}else{
+		document.formulario.submit();
+	}
+}
+
+$("#entidad").change(function(){
+
+	if($("#entidad").val() > 0){
+
+    var data = {"entidad": $("#entidad").val()};
+
+	$.ajax({
+	        type : "GET",
+	        contentType : "application/json",
+	        url : "/menu_bancos/contratos/buscar_sucursal",
+	        data : data,
+	        dataType : 'json',
+	        timeout : 100000,
+	        success : function(result) {     
+
+	        	if(result.length > 0){
+
+	        		var htmlcode = "";
+		        	$("#sucursal").attr("disabled",false);        			        	
+		        	$('#select2-chosen-3').html("--SELECCIONE--");
+					var htmlcode = "<option value='0'>--SELECCIONE--</option>";
+
+		            for (var j = 0; j < result.length ; j+=2) {
+
+							htmlcode = htmlcode + '<option value="'+result[j]+'">' + result[j+1] + '</option>';
+					}
+				}else{
+
+					$("#sucursal").attr("disabled",true);
+					$('#select2-chosen-3').html("SIN SUCURSALES");
+					var htmlcode = "<option value='0'>SIN SUCURSALES</option>";
+				}
+
+				$('#sucursal').html(htmlcode);
+	        },
+	        error: function (e) {
+
+	        	alert("Error al buscar la sucursal");
+	            console.debug(error.responseText);
+	        }
+	    });
+
+	}else{
+
+		var htmlcode = "<option value='0'></option>";
+		$("#sucursal").attr("disabled",true);
+		$('#select2-chosen-3').html("");
+		$('#sucursal').html(htmlcode);
+	}
+});
+</script>

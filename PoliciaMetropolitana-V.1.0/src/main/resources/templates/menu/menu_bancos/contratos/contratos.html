@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout::head">
+<meta charset="UTF-8">
+</head>
+<script type="text/javascript">
+$(document).ready(function(){
+
+    var mensaje = $("#mensaje").val();
+
+    if(mensaje != ""){
+        alert(mensaje);
+    }
+
+    //FECHA DE HOY
+    var f = new Date();
+    var anio = f.getFullYear();
+    var mes = f.getMonth() +1;
+    var dia = f.getDate()+1;
+
+    if(mes < 10){
+    	mes = '0' + mes;
+    }
+
+	fecha_min = anio + '-' + mes + '-' + dia;
+});
+</script>
+<body>
+	<header th:replace="layout/layout::header"></header>
+	<div class="container">
+		<div class="row">
+			<div align="center" style="margin-top: 40px;">
+				<a class="btn btn-primary" th:href="@{/menu_bancos}" title="Ir la página anterior">VOLVER</a>
+			</div>
+			
+        <div class="panel panel-primary filterable">
+            <div class="panel-heading">
+                <h3 class="panel-title">Contratos</h3>
+                <a class="btn_agregar" type="button" sec:authorize="hasRole('Administrador')" th:href="@{agregar/}"><span class="text" style="margin: 5px;">Agregar Contrato</span></a>
+                <div class="pull-right">
+                    <button class="btn_tabla btn-filter"><i class="fas fa-filter"></i>Filtro</button>
+                </div>
+            </div>
+
+            <table class="table" >
+                <thead>
+                    <tr class="filters">
+                        <th><input style="font-weight: bold;" type="text" class="form-control_tabla" placeholder="Vigilante" disabled></th>
+                        <th><input style="font-weight: bold;" type="text" class="form-control_tabla" placeholder="Entidad bancaria" disabled></th>
+                        <th><input style="font-weight: bold;" type="text" class="form-control_tabla" placeholder="Sucursal" disabled></th>
+                        <th><input style="font-weight: bold;" type="text" class="form-control_tabla" placeholder="Domicilio cucursal" disabled></th>
+                        <th><input style="font-weight: bold;" type="text" class="form-control_tabla" placeholder="Fecha contrato" disabled></th>
+                        <th sec:authorize="hasRole('Administrador')"><span style="font-weight: bold; font-size: 14px;">Acciones</span></th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    <tr th:each="contratos: ${contratos}" sec:authorize="hasAnyRole('Administrador','Detective')">
+		                <td th:if="${contratos.vigilante.arma == 1}" th:utext="${contratos.vigilante.usuario.persona.apellido}+' '+${contratos.vigilante.usuario.persona.nombre} + ', ' + ${contratos.vigilante.edad} + ' AÑOS (&lt;strong&gt;ARMADO&lt;/strong&gt;)'"></td>
+		                <td th:unless="${contratos.vigilante.arma == 1}" th:utext="${contratos.vigilante.usuario.persona.apellido}+' '+${contratos.vigilante.usuario.persona.nombre} + ', ' + ${contratos.vigilante.edad} + ' AÑOS (&lt;strong&gt;SIN ARMA&lt;/strong&gt;)'"></td>
+                        <td th:text="${contratos.sucursal.entidad.descripcion}"></td>
+                        <td th:text="${contratos.sucursal.descripcion}"></td>
+                        <td th:text="${contratos.sucursal.domicilio}"></td>
+                        <td th:text="${contratos.fechacontrato}?${#dates.format(contratos.fechacontrato,'dd/MM/yyyy')}"></td>
+                        <td sec:authorize="hasRole('Administrador')">
+		                	<a class="btn" style="padding: 0;" id="editar" th:href="@{editar/} + ${contratos.id}"><img th:src="@{/img/editar.png}" width="30px" height="30px" ></a>
+                            <a class="btn" style="padding: 0;" id="eliminar" onclick="return confirm('¿Está seguro que desea eliminar el contrato?')" th:href="@{eliminar/} + ${contratos.id}"><img th:src="@{/img/eliminar.png}" width="30px" height="30px"></a>
+		                </td>
+		            </tr>
+                    <tr th:each="contratos: ${contratos}" sec:authorize="hasRole('Vigilante')" th:if="${contratos.vigilante.usuario.usuario == #authentication.getPrincipal().getUsername()}">
+                        <td th:text="${contratos.vigilante.usuario.persona.apellido}+', '+${contratos.vigilante.usuario.persona.nombre}"></td>
+                        <td th:text="${contratos.sucursal.entidad.descripcion}"></td>
+                        <td th:text="${contratos.sucursal.descripcion}"></td>
+                        <td th:text="${contratos.sucursal.domicilio}"></td>
+                        <td th:text="${contratos.fechacontrato}?${#dates.format(contratos.fechacontrato,'dd/MM/yyyy')}"></td>
+                        <td sec:authorize="hasRole('Administrador')">
+                            <a class="btn" style="padding: 0;" id="editar" th:href="@{editar/} + ${contratos.id}"><img th:src="@{/img/editar.png}" width="30px" height="30px" ></a>
+                            <a class="btn" style="padding: 0;" id="eliminar" onclick="return confirm('¿Está seguro que desea eliminar el contrato?')" th:href="@{eliminar/} + ${contratos.id}"><img th:src="@{/img/eliminar.png}" width="30px" height="30px"></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <input hidden="hidden" name="mensaje" id="mensaje" th:value="${mensaje}">
+        </div>
+    </div>
+	</div>
+	
+	<footer th:replace="layout/layout::footer"></footer>
+</body>
+</html>

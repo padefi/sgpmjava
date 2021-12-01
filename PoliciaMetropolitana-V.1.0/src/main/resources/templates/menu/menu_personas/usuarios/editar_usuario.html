@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout::head">
+<meta charset="UTF-8">
+</head>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#tipo_usuario").select2();
+	$("#tipo_usuario").val($("#id_tipo").val());
+	$('#select2-chosen-1').html($( "#tipo_usuario option:selected" ).text());
+
+	$('#nombre,#apellido').keyup(function(){
+        $(this).val($(this).val().toUpperCase());
+    });
+
+    if($("#usuario").val() != ""){
+    	$("#usuario").prop('disabled',false);
+    }
+
+	var mensaje = $("#mensaje").val();
+
+    if(mensaje != ""){
+    	alert(mensaje);
+    }
+
+     if($("#tipo_usuario").val() == 3){
+    	$("#tr_fecha_nacimiento").css('display','');
+    	$("#tr_arma").css('display','');
+    }else{
+    	$("#tr_fecha_nacimiento").css('display','none');
+    	$("#tr_arma").css('display','none');
+    	$("#fecha_nacimiento").val("0001-01-01");
+    	$("#arma").val("");
+    }
+});
+</script>
+<body>
+	<header th:replace="layout/layout::header"></header>
+	<div class="container">
+		<div class="row">
+			<div align="center" style="margin-top: 40px;">
+				<a class="btn btn-primary" th:href="@{/menu_personas/usuarios/usuarios}" title="Ir la página anterior">VOLVER</a>
+			</div>
+			<form method="POST" role="form" id="formulario" name="formulario" class="form" th:action="@{/menu_personas/usuarios/editar/guardar_usuario}">
+			<div class="panel panel-primary filterable" style="width: 30%;margin-left:35%;">
+	            <div class="panel-heading">
+	                <h4 align="center">Editar Usuarios</h4>
+	            </div>
+				<table class="table">
+		            <tr>
+		                <td><b>Apellido/s:</b></td>
+		                <td><input class="form-control" style="width: 200px;height: 30px;" id="apellido" name="apellido" type="text" required="" autocomplete="off" maxlength="30" onkeypress="return soloLetras(event)" onchange="usua();" th:value="${usuario.persona.apellido}"></td>
+		            </tr>
+		            <tr>
+		            	<td><b>Nombre/s:</b></td>
+		                <td><input class="form-control" style="width: 200px;height: 30px;" id="nombre" name="nombre" type="text" required="" autocomplete="off" maxlength="30" onkeypress="return soloLetras(event)" onchange="usua();" th:value="${usuario.persona.nombre}"></td>
+		            </tr>
+		            <tr>
+		            	<td><b>Usuario:</b></td>
+		                <td><input class="form-control" style="width: 200px;height: 30px;" id="usuario" name="usuario" type="text" required="" autocomplete="off" maxlength="30" onkeypress="return soloLetras(event)" disabled th:value="${usuario.usuario}"></td>
+		            </tr>
+		            <tr>
+		                <td><b>Tipo Usuario:</b></td>
+		                <td><select id="tipo_usuario" name="tipo_usuario">
+							<option th:each="tipoUsuario: ${tipoUsuario}" th:value="${tipoUsuario.id}" th:text="${tipoUsuario.descripcion}"></option>
+							</select></td>
+		            </tr>
+		            <tr id="tr_fecha_nacimiento" style="display: none">
+		                <td><b>F. nac:</b></td>
+		                <td><input class="form-control" style="width: 200px;height: 30px;" id="fecha_nacimiento" name="fecha_nacimiento" type="date" required="" autocomplete="off"th:value="${fecha_nacimiento}"></td>
+		            </tr>
+		            <tr id="tr_arma" style="display: none">
+		                <td><b>Arma:</b></td>
+		                <td><input style="width: 25px;height: 25px;" id="arma" name="arma" type="checkbox" required="" autocomplete="off" th:checked="${arma == 1}"></td>
+		            </tr>
+				</table>
+			</div>
+			<div align="center" style="margin-top: 40px;">
+				<input hidden="hidden" id="id_tipo" name="id_tipo" th:value="${usuario.tipo.id}">
+				<input hidden="hidden" id="id_usuario" name="id_usuario" th:value="${usuario.id}">
+				<input hidden="hidden" id="id_persona" name="id_persona" th:value="${usuario.persona.id}">
+				<input class="btn btn-primary" style="width: 100px;" onclick="validar();" value="GUARDAR">
+			</div>
+			</form>
+			<input hidden="hidden" name="mensaje" id="mensaje" th:value="${mensaje}">
+		</div>	
+    </div>
+	
+	<footer th:replace="layout/layout::footer"></footer>
+</body>
+</html>
+<script type="text/javascript">
+
+$("#tipo_usuario").change(function(event){
+	if($("#tipo_usuario").val() == 3){
+    	$("#tr_fecha_nacimiento").css('display','');
+    	$("#tr_arma").css('display','');
+    }else{
+    	$("#tr_fecha_nacimiento").css('display','none');
+    	$("#tr_arma").css('display','none');
+    	$("#fecha_nacimiento").val("0001-01-01");
+    	$("#arma").val("");
+    }
+});
+
+function validar(){
+	if($("#apellido").val() == ''){
+		alert("Debe indicar un apellido");
+		document.formulario.apellido.focus();
+		return 0;
+	}
+	
+	if($("#nombre").val() == ''){
+		alert("Debe indicar un nombre");
+		document.formulario.nombre.focus();
+		return 0;
+	}
+
+	if($("#usuario").val() == ''){
+		alert("Debe indicar un usuario");
+		document.formulario.usuario.focus();
+		return 0;
+	}
+
+	if($("#tipo_usuario").val() == '0'){
+		alert("Debe seleccionar un tipo de usuario");
+		document.formulario.tipo_usuario.focus();
+		return 0;
+	}
+
+	if($("#tipo_usuario").val() == '3'){
+		
+		fecha = $("#fecha_nacimiento").val();
+
+		var fecha_hoy = new Date;
+		anio = fecha_hoy.getFullYear()-18;
+		dia = fecha_hoy.getDate()+1;
+
+		if((fecha_hoy.getMonth()+1) < 9){
+			mes = '0'+(fecha_hoy.getMonth()+1);
+		}else{
+			mes = fecha_hoy.getMonth()+1;
+		}
+
+		fecha_hoy = (anio) + "-" + (mes) + "-" + (dia);
+
+		if($("#fecha_nacimiento").val() == '' || $("#fecha_nacimiento").val() == '0001-01-01'){
+			alert("Debe indicar la fecha de nacimiento");
+			document.formulario.fecha_nacimiento.focus();
+			return 0;
+		}
+
+		if(fecha > fecha_hoy){
+			alert("El vigilante no puede ser menor de 18 años");
+			document.formulario.fecha_nacimiento.focus();
+			return 0;
+		}else{
+			document.formulario.submit();
+		}
+	}else{
+		document.formulario.submit();
+	}
+}
+
+function usua(){
+	var nom = $("#nombre").val();
+    var ape = $("#apellido").val().replaceAll(' ','');
+
+	if(nom != '' && ape != ''){
+
+		var usu = (nom.substr(0,1)+ape.substr(0,ape.length)).toLowerCase();
+
+		$("#usuario").val(usu);
+		$("#usuario").prop('disabled',false);
+	}else{
+		$("#usuario").prop('disabled',true);
+	}
+}
+</script>

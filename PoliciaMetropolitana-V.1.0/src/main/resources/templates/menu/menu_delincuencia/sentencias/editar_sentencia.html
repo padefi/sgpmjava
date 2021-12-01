@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout::head">
+<meta charset="UTF-8">
+</head>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#delincuente,#delito,#juez').select2();
+
+	//FECHA DE HOY
+    var f = new Date();
+    var anio = f.getFullYear();
+    var mes = f.getMonth()+1;
+    var dia = f.getDate();
+
+    if(mes < 10){
+    	mes = '0' + mes;
+    }
+
+    if(dia < 9){
+    	dia = '0' + dia;
+    }
+
+	fecha_min = anio + '-' + mes + '-' + dia;
+
+	let fecha_inicio = document.getElementById('fecha_inicio');
+	fecha_inicio.min = fecha_min;
+
+	fecha_min_fin = anio + '-' + mes + '-' + (dia+1);
+	let fecha_fin = document.getElementById('fecha_fin');
+	fecha_fin.min = fecha_min_fin;
+
+	$("#delincuente").val($("#id_delincuente").val());
+    $("#select2-chosen-1").html($("#descripcion_delincuente").val());
+	$("#delito").val($("#id_delito").val());
+    $("#select2-chosen-2").html("<option value='"+$("#id_delito").val()+"'>"+$("#descripcion_delito").val()+"</option>");
+    $("#juez").val($("#id_juez").val());
+    $("#select2-chosen-3").html($("#descripcion_juez").val());
+});
+</script>
+<body>
+	<header th:replace="layout/layout::header"></header>
+	<div class="container">
+		<div class="row">
+			<div align="center" style="margin-top: 40px;">
+				<a class="btn btn-primary" th:href="@{/menu_delincuencia/sentencias/sentencias}" title="Ir la página anterior">VOLVER</a>
+			</div>
+			<form method="POST" role="form" id="formulario" name="formulario" class="form" th:action="@{/menu_delincuencia/sentencias/editar/guardar_sentencia}">
+			<div class="panel panel-primary filterable" style="width: 55%;margin-left:25%;">
+	            <div class="panel-heading">
+	                <h4 align="center">Editar Delito</h4>
+	            </div>
+				<table class="table">
+		            <tr>
+		                <td><b>Delincuente:</b></td>
+		                <td><select id="delincuente" name="delincuente">
+		                	<option value="0">--SELECCIONE--</option>
+		                	<option th:each="delincuente: ${delincuentes}" th:value="${delincuente.id}" th:text="${delincuente.persona.apellido}+' '+${delincuente.persona.nombre}"></option>
+							</select></td>
+		            </tr>
+		            <tr>
+		                <td><b>Delito:</b></td>
+		                <td><select id="delito" name="delito" style="width: 380px;">
+		                	<option value="0">--SELECCIONE--</option>
+		                	<option th:value="${sentencia.delito.id}" th:text="${sentencia.delito.sucursal.entidad.descripcion}+', '+${sentencia.delito.sucursal.descripcion}+' '+${#dates.format(sentencia.delito.fechadelito,'dd/MM/yyyy')}"></option>
+		                	<option th:each="delito: ${delitos}" th:value="${delito.id}" th:text="${delito.sucursal.entidad.descripcion}+', '+${delito.sucursal.descripcion}+' '+${#dates.format(delito.fechadelito,'dd/MM/yyyy')}"></option>
+							</select></td>
+		            </tr>
+		            <tr>
+		                <td><b>Juez:</b></td>
+		                <td><select id="juez" name="juez">
+		                	<option value="0">--SELECCIONE--</option>
+		                	<option th:each="juez: ${jueces}" th:value="${juez.id}" th:text="${juez.persona.apellido}+', '+${juez.persona.nombre}"></option>
+							</select></td>
+		            </tr>
+		            <tr>
+		            	<td><b>Fecha Inicio:</b></td>
+		                <td><input class="form-control" style="width: 170px;height: 30px;" id="fecha_inicio" name="fecha_inicio" type="date" required="" autocomplete="off"th:value="${sentencia.fechainicio}"></td>
+		            </tr>
+		            <tr>
+		            	<td><b>Fecha Fin:</b></td>
+		                <td><input class="form-control" style="width: 170px;height: 30px;" id="fecha_fin" name="fecha_fin" type="date" required="" autocomplete="off"th:value="${sentencia.fechafin}"></td>
+		            </tr>
+				</table>
+			</div>
+			<div align="center" style="margin-top: 40px;">
+				<input hidden="hidden" id="id_sentencia" name="id_sentencia" th:value="${sentencia.id}">
+				<input hidden="hidden" id="id_delincuente" name="id_delincuente" th:value="${sentencia.delito.delincuente.id}">
+				<input hidden="hidden" id="descripcion_delincuente" name="descripcion_delincuente" th:value="${sentencia.delito.delincuente.persona.apellido}+' '+${sentencia.delito.delincuente.persona.nombre}">
+				<input hidden="hidden" id="id_delito" name="id_delito" th:value="${sentencia.delito.id}">
+				<input hidden="hidden" id="descripcion_delito" name="descripcion_delito" th:value="${sentencia.delito.sucursal.entidad.descripcion}+', '+${sentencia.delito.sucursal.descripcion}+' '+${#dates.format(sentencia.delito.fechadelito,'dd/MM/yyyy')}">
+				<input hidden="hidden" id="id_juez" name="id_juez" th:value="${sentencia.juez.id}">
+				<input hidden="hidden" id="descripcion_juez" name="descripcion_juez" th:value="${sentencia.juez.persona.apellido}+', '+${sentencia.juez.persona.nombre}">
+				<input class="btn btn-primary" style="width: 100px;" onclick="validar()" value="GUARDAR">
+			</div>
+			</form>
+		</div>	
+    </div>
+	
+	<footer th:replace="layout/layout::footer"></footer>
+</body>
+</html>
+<script type="text/javascript">
+$("#fecha_inicio").change(function(){
+  	let fecha_fin = document.getElementById('fecha_fin');
+	fecha_fin.min = $('#fecha_inicio').val();
+});
+
+function validar(){
+
+	if($("#delincuente").val() == '0'){
+		alert("Debe seleccionar un delincuente");
+		document.formulario.delincuente.focus();
+		return 0;
+	}
+
+	if($("#delito").val() == '0'){
+		alert("Debe seleccionar un delito");
+		document.formulario.delito.focus();
+		return 0;
+	}
+
+	if($("#juez").val() == '0'){
+		alert("Debe seleccionar un juez");
+		document.formulario.delito.focus();
+		return 0;
+	}
+
+	if($("#fecha_inicio").val() == ''){
+		alert("Debe seleccionar una fecha de inicio de la sentencia");
+		document.formulario.fecha_inicio.focus();
+		return 0;
+	}
+		
+	var fecha_inicio = $("#fecha_inicio").val();
+
+	var fecha_hoy = new Date;
+	anio = fecha_hoy.getFullYear();
+	dia = fecha_hoy.getDate();
+
+	if((fecha_hoy.getMonth()+1) < 9){
+		mes = '0'+(fecha_hoy.getMonth()+1);
+	}else{
+		mes = fecha_hoy.getMonth()+1;
+	}
+
+	if(dia < 9){
+    	dia = '0' + dia;
+    }
+
+	var fecha_hoy = (anio) + "-" + (mes) + "-" + (dia);
+
+	if(fecha_inicio < fecha_hoy){
+		alert("La fecha de inicio no puede ser menor a la actual");
+		document.formulario.fecha_inicio.focus();
+		return 0;
+	}
+
+	if($("#fecha_fin").val() == ''){
+		alert("Debe seleccionar una fecha de fin de la sentencia");
+		document.formulario.fecha_fin.focus();
+		return 0;
+	}
+
+	var fecha_fin = $("#fecha_fin").val();
+
+	if(fecha_fin <= fecha_inicio){
+		alert("La fecha de fin no puede ser menor o igual a la fecha de inicio");
+		document.formulario.fecha_fin.focus();
+		return 0;
+	}else{
+		document.formulario.submit();
+	}
+}
+
+$("#delincuente").change(function(){
+
+	if($("#delincuente").val() > 0){
+
+    var data = {"delincuente": $("#delincuente").val()};
+
+	$.ajax({
+	        type : "GET",
+	        contentType : "application/json",
+	        url : "/menu_delincuencia/sentencias/buscar_delitos",
+	        data : data,
+	        dataType : 'json',
+	        timeout : 100000,
+	        success : function(result) {     
+
+	        	if(result.length > 0){
+
+	        		var htmlcode = "";
+		        	$("#delito").attr("disabled",false);        			        	
+		        	$('#select2-chosen-2').html("--SELECCIONE--");
+					var htmlcode = "<option value='0'>--SELECCIONE--</option>";
+
+		            for (var j = 0; j < result.length ; j+=3) {
+
+							htmlcode = htmlcode + '<option value="'+result[j]+'">'+result[j+1]+' '+result[j+2]+'</option>';
+					}
+				}else{
+
+					$("#delito").attr("disabled",true);
+					$('#select2-chosen-2').html("SIN DELITOS");
+					var htmlcode = "<option value='0'>SIN DELITOS</option>";
+				}
+
+				$('#delito').html(htmlcode);
+	        },
+	        error: function (e) {
+
+	        	alert("Error al buscar los delitos");
+	            console.debug(error.responseText);
+	        }
+	    });
+
+	}else{
+
+		var htmlcode = "<option value='0'></option>";
+		$("#delito").attr("disabled",true);
+		$('#select2-chosen-2').html("");
+		$('#delito').html(htmlcode);
+	}
+});
+</script>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout::head">
+<meta charset="UTF-8">
+</head>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#banda').keyup(function(){
+        $(this).val($(this).val().toUpperCase());
+    });
+});
+</script>
+<body>
+	<header th:replace="layout/layout::header"></header>
+	<div class="container">
+		<div class="row">
+			<div align="center" style="margin-top: 40px;">
+				<a class="btn btn-primary" th:href="@{/menu_delincuencia/bandas/bandas}" title="Ir la página anterior">VOLVER</a>
+			</div>
+			<form method="POST" role="form" id="formulario" name="formulario" class="form" th:action="@{/menu_delincuencia/bandas/editar/guardar_banda}">
+			<div class="panel panel-primary filterable" style="width: 30%;margin-left:35%;">
+	            <div class="panel-heading">
+	                <h4 align="center">Editar Delincuente</h4>
+	            </div>
+				<table class="table">
+		            <tr>
+		                <td><b>Banda:</b></td>
+		                <td><input class="form-control" style="width: 200px;height: 30px;" id="banda" name="banda" type="text" required="" autocomplete="off" maxlength="30" onkeypress="return soloLetras(event)" th:value="${banda.descripcion}"></td>
+		            </tr>
+				</table>
+			</div>
+			<div align="center" style="margin-top: 40px;">
+				<input hidden="hidden" id="id_banda" name="id_banda" th:value="${banda.id}">
+				<input class="btn btn-primary" style="width: 100px;" type="submit" value="GUARDAR">
+			</div>
+			</form>
+		</div>	
+    </div>
+	
+	<footer th:replace="layout/layout::footer"></footer>
+</body>
+</html>

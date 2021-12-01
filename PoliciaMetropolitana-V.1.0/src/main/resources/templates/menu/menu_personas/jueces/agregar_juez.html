@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout::head">
+<meta charset="UTF-8">
+</head>
+<script type="text/javascript">
+$(document).ready(function(){
+
+	$('#nombre,#apellido').keyup(function(){
+        $(this).val($(this).val().toUpperCase());
+    });
+
+	var mensaje = $("#mensaje").val();
+
+    if(mensaje != ""){
+    	alert(mensaje);
+    }
+
+    //FECHA DE HOY
+    var f = new Date();
+    var anio = f.getFullYear();
+    var mes = f.getMonth() +1;
+    var dia = f.getDate();
+
+    if(mes < 10){
+    	mes = '0' + mes;
+    }
+
+    if(dia < 9){
+    	dia = '0' + dia;
+    }
+
+	fecha_max = anio + '-' + mes + '-' + dia;
+
+	let inicio_actividad = document.getElementById('inicio_actividad');
+	inicio_actividad.max = fecha_max;
+});
+</script>
+<body>
+	<header th:replace="layout/layout::header"></header>
+	<div class="container">
+		<div class="row">
+			<div align="center" style="margin-top: 40px;">
+				<a class="btn btn-primary" th:href="@{/menu_personas/jueces/jueces}" title="Ir la página anterior">VOLVER</a>
+			</div>
+			<form method="POST" role="form" id="formulario" name="formulario" class="form" th:action="@{/menu_personas/jueces/agregar/guardar_juez}">
+			<div class="panel panel-primary filterable" style="width: 30%;margin-left:35%;">
+	            <div class="panel-heading">
+	                <h4 align="center">Agregar Juez</h4>
+	            </div>
+				<table class="table">
+		            <tr>
+		                <td><b>Apellido/s:</b></td>
+		                <td><input class="form-control" style="width: 200px;height: 30px;" id="apellido" name="apellido" type="text" required="" autocomplete="off" maxlength="30" onkeypress="return soloLetras(event)" th:value="${apellido}"></td>
+		            </tr>
+		            <tr>
+		            	<td><b>Nombre/s:</b></td>
+		                <td><input class="form-control" style="width: 200px;height: 30px;" id="nombre" name="nombre" type="text" required="" autocomplete="off" maxlength="30" onkeypress="return soloLetras(event)" th:value="${nombre}"></td>
+		            </tr>
+
+		            <tr>
+		            	<td><b>Inicio Actividad:</b></td>
+		                <td><input class="form-control" style="width: 200px;height: 30px;" id="inicio_actividad" name="inicio_actividad" type="date" required="" autocomplete="off"th:value="${inicio_actividad}"></td>
+		            </tr>
+				</table>
+			</div>
+			<div align="center" style="margin-top: 40px;">
+				<input class="btn btn-primary" style="width: 100px;" type="submit" value="GUARDAR">
+			</div>
+			</form>
+			<input hidden="hidden" name="mensaje" id="mensaje" th:value="${mensaje}">
+		</div>	
+    </div>
+	
+	<footer th:replace="layout/layout::footer"></footer>
+</body>
+</html>

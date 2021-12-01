@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head">
+<title>POLICIA METROPOLITANA</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name=viewport content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="icon" type="/PoliciaMetropolitanaWebDB/image/png" th:href="@{/img/logo.png}">
+<link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css" id="bootstrap-css">
+<link rel="stylesheet" href="/css/bootstrap/bootstrap.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+<link rel="stylesheet" href="/css/select2.css">
+<script src="/js/bootstrap/bootstrap.min.js"></script>
+<script src="/js/jquery/jquery.js"></script>
+<script src="/js/scripts.js"></script>
+<script src="/js/select2.js"></script>
+<script type="text/javascript" th:inline="javascript">    
+	/*document.onkeydown = function (e) {
+        if (e.keyCode === 116) {
+            alert("No está permitido recargar la página")
+            return false;
+        }
+    };*/
+</script>
+</head>
+<body>
+	<header th:fragment="header" class="header container-fluid row sesion" style="margin: 0px;">
+		<div class="col-xs-12col-sm-3 col-md-11">
+			<div class="poli_logo">
+		    	<img class="poli_img img-responsive" th:src="@{/img/logo.png}"/>
+		    	<div align="center">
+		    		<h1>SISTEMA DE GESTIÓN POLICÍA METROPOLITANA</h1>
+		    	</div>
+			</div>
+		</div>
+		<div class="col-xs-12 col-sm-3 col-md-12"> 	
+			<div class="interno_menu">
+				<div>
+					<img class="icono_usuario img-responsive" th:src="@{/img/icono-usuario.png}"/>
+				</div>
+			    <ul>
+			    	<li>
+			    		<b style="color: white;" sec:authentication="name"></b><br>
+			    		<form th:action="@{/logout}" method="post" id="logout" name="logout">
+			        		<a type="button" style="color: white;" onclick="(document.logout.submit())">Cerrar Sesión</a>
+			        	</form>
+			    	</li>
+				</ul>
+			</div>
+		</div>
+	</header>
+	<footer th:fragment="footer" class="footer container-fluid row sesion" style="margin: 0px;">
+		<div class="col-xs-12 col-sm-3 col-md-12">
+			<img class="poli_img img-responsive" th:src="@{/img/logo.png}"/>
+			<div style="margin-top: 10px;">
+				<b style="font-size: 20px;color: white;margin-left: 5%;">Tel.: </b><span style="font-size: 18px;color: white;">911</span>
+				<b style="font-size: 20px;color: white;margin-left: 10%;">Email: </b><span style="font-size: 18px;color: white;">contacto@policiametropolitana.com.ar</span>
+				<i style="font-size: 20px;color: white;margin-left: 15%;">Al servicio de la comunidad</i>
+			</div>
+		</div>
+	</footer>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/layout::head">
+<meta charset="UTF-8">
+</head>
+<body>
+<header th:replace="layout/layout::header"></header>
+<br>
+<br>
+	<div class="container">
+		<div class="row">
+			<div class="panel-body">
+				<div align="center">
+					<img th:src="@{/img/error_404.png}" width="500" height="400">
+					<h4>La página que intenta acceder no fue encontrada</h4>
+					<br>
+					<a class="btn btn-primary" onclick="window.history.back()">Regresar</a>
+				</div>
+			</div>
+			</div>
+	    </div>
+	</div>
+	<footer th:replace="layout/layout::footer"></footer>
+</body>
+</html>

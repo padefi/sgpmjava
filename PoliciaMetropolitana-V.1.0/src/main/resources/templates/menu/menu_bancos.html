@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/layout::head">
+<meta charset="UTF-8">
+</head>
+<body>
+	<header th:replace="layout/layout::header"></header>
+	<div class="container">
+		<div class="row">
+			<div align="center" style="margin-top: 40px;">
+				<a class="btn btn-primary" th:href="@{/principal}" title="Ir la página anterior">VOLVER</a>
+			</div>
+			<div align="center" style="margin-top: 20px;">
+	        	<h1 style="font-family: cursive"><b>BANCOS</b></h1>
+	        </div>
+			<br><br><br><br>
+
+			<div class="col-xs-12 col-sm-8 col-md-12">
+				<div align="center" sec:authorize="hasAnyRole('Administrador','Detective')">
+					<a th:href="@{/menu_bancos/entidades/entidades}" class="button">ENTIDADES BANCARIAS</a>
+				</div>
+				<div align="center" sec:authorize="hasAnyRole('Administrador','Detective')">
+					<a th:href="@{/menu_bancos/sucursales/sucursales}" class="button">SUCURSALES</a>
+				</div>
+				<div align="center">
+					<a th:href="@{/menu_bancos/contratos/contratos}" class="button">CONTRATOS</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<footer th:replace="layout/layout::footer"></footer>
+</body>
+</html>

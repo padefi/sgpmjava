@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/layout::head">
+<meta charset="UTF-8">
+</head>
+<body>
+<header th:replace="layout/layout::header"></header>
+<br>
+<br>
+	<div class="container">
+		<div class="table-responsive" align="center">
+			<div align="center" style="margin-top: 20px;">
+	        	<h1 style="font-family: cursive"><b>MENÚ PRINCIPAL</b></h1>
+	        </div>
+	        
+	        <br><br>
+	       
+	        <table class="table" style="border: transparent;">   
+	            <tr>
+	                <td align="center">
+	                    <a th:href="@{/menu_personas}"><img th:src="@{/img/personas.png}" width="150px" height="150px" title=""></a>
+	                </td>
+	                <td align="center">
+	                    <a th:href="@{/menu_bancos}"><img th:src="@{/img/banco.png}" width="150px" height="150px" title=""></a>
+	                </td>
+	                <td align="center" sec:authorize="hasAnyRole('Administrador','Detective')">
+	                    <a th:href="@{/menu_delincuencia}"><img th:src="@{/img/ladron.png}" width="150px" height="150px" title=""></a>
+	                </td>
+	            </tr>
+	        </table>
+	    </div>
+	</div>
+	<footer th:replace="layout/layout::footer"></footer>
+</body>
+</html>

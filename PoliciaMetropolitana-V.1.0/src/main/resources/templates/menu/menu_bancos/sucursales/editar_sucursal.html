@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout::head">
+<meta charset="UTF-8">
+</head>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#entidad").select2();
+
+	$('#sucursal,#domicilio').keyup(function(){
+        $(this).val($(this).val().toUpperCase());
+    });
+
+    $("#entidad").val($("#id_entidad").val());
+    $("#select2-chosen-1").html($("#descripcion_entidad").val());
+});
+</script>
+<body>
+	<header th:replace="layout/layout::header"></header>
+	<div class="container">
+		<div class="row">
+			<div align="center" style="margin-top: 40px;">
+				<a class="btn btn-primary" th:href="@{/menu_bancos/sucursales/sucursales}" title="Ir la página anterior">VOLVER</a>
+			</div>
+			<form method="POST" role="form" id="formulario" name="formulario" class="form" th:action="@{/menu_bancos/sucursales/editar/guardar_sucursal}">
+			<div class="panel panel-primary filterable" style="width: 30%;margin-left:35%;">
+	            <div class="panel-heading">
+	                <h4 align="center">Editar Sucursal</h4>
+	            </div>
+				<table class="table">
+		            <tr>
+		                <td><b>Sucursal:</b></td>
+		                <td><input class="form-control" style="width: 200px;height: 30px;" id="sucursal" name="sucursal" type="text" required="" autocomplete="off" maxlength="30" th:value="${sucursal.descripcion}"></td>
+		            </tr>
+		            <tr>
+		                <td><b>Domicilio:</b></td>
+		                <td><input class="form-control" style="width: 200px;height: 30px;" id="domicilio" name="domicilio" type="text" required="" autocomplete="off" maxlength="50" th:value="${sucursal.domicilio}"></td>
+		            </tr>
+		            <tr>
+		                <td><b>Cant. Empleados:</b></td>
+		                <td><input class="form-control" style="width: 200px;height: 30px;" id="cant_empleados" name="cant_empleados" type="text" onkeypress="if (event.keyCode < 48 || event.keyCode > 57) event.returnValue = false;" required="" autocomplete="off" maxlength="3" th:value="${sucursal.cant_empleados}"></td>
+		            </tr>
+		            <tr>
+		                <td><b>Entidad Bancaria:</b></td>
+		                <td><select id="entidad" name="entidad">
+		                	<option value="0">--SELECCIONE--</option>
+		                	<option th:each="entidad: ${entidades}" th:value="${entidad.id}" th:text="${entidad.descripcion}"></option>
+							</select></td>
+		            </tr>
+				</table>
+			</div>
+			<div align="center" style="margin-top: 40px;">
+				<input hidden="hidden" id="id_sucursal" name="id_sucursal" th:value="${sucursal.id}">
+				<input hidden="hidden" id="id_entidad" name="id_entidad" th:value="${sucursal.entidad.id}">
+				<input hidden="hidden" id="descripcion_entidad" name="descripcion_entidad" th:value="${sucursal.entidad.descripcion}">
+				<input class="btn btn-primary" style="width: 100px;" type="submit" value="GUARDAR">
+			</div>
+			</form>
+		</div>	
+    </div>
+	
+	<footer th:replace="layout/layout::footer"></footer>
+</body>
+</html>

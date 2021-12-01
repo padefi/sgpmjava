@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout::head">
+<meta charset="UTF-8">
+</head>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#entidad").select2();
+
+	$('#sucursal,#domicilio').keyup(function(){
+        $(this).val($(this).val().toUpperCase());
+    });
+
+	var mensaje = $("#mensaje").val();
+
+    if(mensaje != ""){
+    	alert(mensaje);
+    }
+});
+</script>
+<body>
+	<header th:replace="layout/layout::header"></header>
+	<div class="container">
+		<div class="row">
+			<div align="center" style="margin-top: 40px;">
+				<a class="btn btn-primary" th:href="@{/menu_bancos/sucursales/sucursales}" title="Ir la página anterior">VOLVER</a>
+			</div>
+			<form method="POST" role="form" id="formulario" name="formulario" class="form" th:action="@{/menu_bancos/sucursales/agregar/guardar_sucursal}">
+			<div class="panel panel-primary filterable" style="width: 30%;margin-left:35%;">
+	            <div class="panel-heading">
+	                <h4 align="center">Agregar Sucursal</h4>
+	            </div>
+				<table class="table">
+		            <tr>
+		                <td><b>Sucursal:</b></td>
+		                <td><input class="form-control" style="width: 200px;height: 30px;" id="sucursal" name="sucursal" type="text" required="" autocomplete="off" maxlength="30" th:value="${sucursal}"></td>
+		            </tr>
+		            <tr>
+		                <td><b>Domicilio:</b></td>
+		                <td><input class="form-control" style="width: 200px;height: 30px;" id="domicilio" name="domicilio" type="text" required="" autocomplete="off" maxlength="50" th:value="${domicilio}"></td>
+		            </tr>
+		            <tr>
+		                <td><b>Cant. Empleados:</b></td>
+		                <td><input class="form-control" style="width: 200px;height: 30px;" id="cant_empleados" name="cant_empleados" type="text" onkeypress="if (event.keyCode < 48 || event.keyCode > 57) event.returnValue = false;" required="" autocomplete="off" maxlength="3" th:value="${cant_empleados}"></td>
+		            </tr>
+		            <tr>
+		                <td><b>Entidad Bancaria:</b></td>
+		                <td><select id="entidad" name="entidad">
+		                	<option value="0">--SELECCIONE--</option>
+		                	<option th:each="entidad: ${entidades}" th:value="${entidad.id}" th:text="${entidad.descripcion}"></option>
+							</select></td>
+		            </tr>
+				</table>
+			</div>
+			<div align="center" style="margin-top: 40px;">
+				<input class="btn btn-primary" style="width: 100px;" onclick="validar();" value="GUARDAR">
+			</div>
+			</form>
+			<input hidden="hidden" name="mensaje" id="mensaje" th:value="${mensaje}">
+		</div>	
+    </div>
+	
+	<footer th:replace="layout/layout::footer"></footer>
+</body>
+</html>
+<script type="text/javascript">
+function validar(){
+
+	if($("#sucursal").val() == ''){
+		alert("Debe indicar un nombre");
+		document.formulario.sucursal.focus();
+		return 0;
+	}
+
+	if($("#domicilio").val() == ''){
+		alert("Debe indicar un domicilio");
+		document.formulario.domicilio.focus();
+		return 0;
+	}
+
+	if($("#cant_empleados").val() == '' || $("#cant_empleados").val() == '0'){
+		alert("Debe indicar una cantidad de empleados");
+		document.formulario.cant_empleados.focus();
+		return 0;
+	}
+
+	if($("#entidad").val() == '0'){
+		alert("Debe seleccionar una entidad bancaria");
+		document.formulario.entidad.focus();
+		return 0;
+	}else{
+		document.formulario.submit();
+	}
+}
+</script>

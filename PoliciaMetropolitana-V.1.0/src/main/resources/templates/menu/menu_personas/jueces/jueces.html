@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout::head">
+<meta charset="UTF-8">
+</head>
+<script type="text/javascript">
+$(document).ready(function(){
+
+    var mensaje = $("#mensaje").val();
+
+    if(mensaje != ""){
+        alert(mensaje);
+    }
+});
+</script>
+<body>
+	<header th:replace="layout/layout::header"></header>
+	<div class="container">
+		<div class="row">
+			<div align="center" style="margin-top: 40px;">
+				<a class="btn btn-primary" th:href="@{/menu_personas}" title="Ir la página anterior">VOLVER</a>
+			</div>
+			
+        <div class="panel panel-primary filterable">
+            <div class="panel-heading">
+                <h3 class="panel-title">Jueces</h3>
+                <a class="btn_agregar" type="button" sec:authorize="hasRole('Administrador')" th:href="@{agregar/}"><span class="text" style="margin: 5px;">Agregar Juez</span></a>
+                <div class="pull-right">
+                    <button class="btn_tabla btn-filter"><i class="fas fa-filter"></i>Filtro</button>
+                </div>
+            </div>
+
+            <table class="table" >
+                <thead>
+                    <tr class="filters">
+                        <th><input style="font-weight: bold;" type="text" class="form-control_tabla" placeholder="Apellido" disabled></th>
+                        <th><input style="font-weight: bold;" type="text" class="form-control_tabla" placeholder="Nombre" disabled></th>
+                        <th><input style="font-weight: bold;" type="text" class="form-control_tabla" placeholder="Inicio Actividad" disabled></th>
+                        <th sec:authorize="hasRole('Administrador')"><span style="font-weight: bold; font-size: 14px;">Acciones</span></th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    <tr th:each="jueces: ${jueces}">
+		                <td th:text="${jueces.persona.apellido}"></td>
+		                <td th:text="${jueces.persona.nombre}"></td>
+		                <td th:text="${#dates.format(jueces.inicio_actividad,'dd/MM/yyyy')} + ', ' + ${jueces.anios} + ' AÑO/S'"></td>               
+		                <td sec:authorize="hasRole('Administrador')">
+		                	<a class="btn" style="padding: 0;" id="editar" th:href="@{editar/} + ${jueces.id}"><img th:src="@{/img/editar.png}" width="30px" height="30px" ></a>
+                            <a class="btn" style="padding: 0;" id="eliminar" onclick="return confirm('¿Está seguro que desea eliminar al juez?')" th:href="@{eliminar/} + ${jueces.id}"><img th:src="@{/img/eliminar.png}" width="30px" height="30px"></a>
+		                </td>
+		            </tr>
+                </tbody>
+            </table>
+            <input hidden="hidden" name="mensaje" id="mensaje" th:value="${mensaje}">
+        </div>
+    </div>
+	</div>
+	
+	<footer th:replace="layout/layout::footer"></footer>
+</body>
+</html>
