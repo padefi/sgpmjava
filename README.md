@@ -26,7 +26,7 @@ Usuarios:
 Cada usuario tiene permisos para determinadas pantallas según el perfil asignado.
 
 La versión actual del sistema permite:
-* Consultar, dar de alta, modificar y eliminar en los siguientes menues:
+* Consultar, dar de alta, modificar y eliminar en los siguientes menus:
 
   * Menú personas
       * Usuarios
